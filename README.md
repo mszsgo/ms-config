@@ -1,7 +1,5 @@
-# HTTP代理
+# ms-config
 
-Docker service 
-```
+配置文件管理
 
-docker run --name proxy.ms --network cluster -p 39084:39084  --restart always  -itd  hub.unionlive.com/proxy:latest
-```
+提供websocket接口，实时更新配置
