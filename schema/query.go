@@ -9,9 +9,9 @@ type Query struct {
 }
 
 type ConfigQuery struct {
-	Info  string `description:"配置单个信息"`
-	List  string `description:"配置列表信息"`
-	Total int64  `description:"配置个数统计"`
+	Info  InfoQuery   `description:"配置信息"`
+	List  []ListQuery `description:"配置列表"`
+	Total TotalQuery  `description:"记录数"`
 }
 
 func (*ConfigQuery) Resolve() graphql.FieldResolveFn {
