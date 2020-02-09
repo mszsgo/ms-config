@@ -1,16 +1,11 @@
 package schema
 
 import (
-	"time"
-
 	"github.com/graphql-go/graphql"
 	"github.com/mszsgo/hjson"
 )
 
-type AddMutation struct {
-	Name      string    `description:"配置名"`
-	UpdatedAt time.Time `description:"更新时间"`
-}
+type AddMutation int64
 
 func (*AddMutation) Description() string {
 	return "新增"
@@ -31,9 +26,6 @@ func (*AddMutation) Resolve() graphql.FieldResolveFn {
 		var args *AddMutationArgs
 		hjson.MapToStruct(p.Args, &args)
 		NewConfig().Insert(args.Name, args.Value, args.Remark)
-		return &AddMutation{
-			Name:      args.Name,
-			UpdatedAt: time.Now(),
-		}, err
+		return 1, err
 	}
 }

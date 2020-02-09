@@ -1,16 +1,11 @@
 package schema
 
 import (
-	"time"
-
 	"github.com/graphql-go/graphql"
 	"github.com/mszsgo/hjson"
 )
 
-type EditMutation struct {
-	Name      string    `description:"配置名"`
-	UpdatedAt time.Time `description:"更新时间"`
-}
+type EditMutation int64
 
 func (*EditMutation) Description() string {
 	return "编辑"
@@ -31,9 +26,6 @@ func (*EditMutation) Resolve() graphql.FieldResolveFn {
 		var args *EditMutationArgs
 		hjson.MapToStruct(p.Args, &args)
 		NewConfig().Update(args.Name, args.Value, args.Remark)
-		return &EditMutation{
-			Name:      args.Name,
-			UpdatedAt: time.Now(),
-		}, err
+		return 1, err
 	}
 }

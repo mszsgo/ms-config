@@ -1,11 +1,9 @@
 package main
 
 import (
-	"log"
+	"config/schema"
 )
 
 func main() {
-	port := 39084
-	log.Printf("Start proxy service :%d ", port)
-
+	schema.ListenServe()
 }

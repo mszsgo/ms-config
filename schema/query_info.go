@@ -11,8 +11,8 @@ type InfoQuery struct {
 	Name      string
 	Value     string
 	Remark    string
-	UpdatedAt time.Time
-	CreatedAt time.Time
+	UpdatedAt string
+	CreatedAt string
 }
 
 func (*InfoQuery) Description() string {
@@ -32,6 +32,12 @@ func (*InfoQuery) Resolve() graphql.FieldResolveFn {
 		var args *InfoQueryArgs
 		hjson.MapToStruct(p.Args, &args)
 		conf := NewConfig().FindOne(args.Name)
-		return &conf, err
+		return &InfoQuery{
+			Name:      conf.Name,
+			Value:     conf.Value,
+			Remark:    conf.Remark,
+			UpdatedAt: conf.UpdatedAt.Local().Format(time.RFC3339),
+			CreatedAt: conf.CreatedAt.Local().Format(time.RFC3339),
+		}, err
 	}
 }

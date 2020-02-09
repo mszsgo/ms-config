@@ -20,7 +20,9 @@ func (*ListQuery) Description() string {
 }
 
 type ListQueryArgs struct {
-	Name string `graphql:"!" description:"配置名"`
+	Name  string `graphql:"" description:"配置名"`
+	Skip  int64  `graphql:"" description:"跳过记录数"`
+	Limit int64  `graphql:"" description:"返回记录数"`
 }
 
 func (*ListQuery) Args() *ListQueryArgs {
@@ -31,7 +33,7 @@ func (*ListQuery) Resolve() graphql.FieldResolveFn {
 	return func(p graphql.ResolveParams) (i interface{}, err error) {
 		var args *ListQueryArgs
 		hjson.MapToStruct(p.Args, &args)
-		conf := NewConfig().FindOne(args.Name)
-		return &conf, err
+		list := NewConfig().Find(args.Name, args.Skip, args.Limit)
+		return &list, err
 	}
 }
