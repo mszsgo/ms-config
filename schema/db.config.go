@@ -4,20 +4,25 @@ import (
 	"log"
 	"time"
 
+	"github.com/mszsgo/hjson"
 	"github.com/mszsgo/hmgdb"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+const (
+	COLLECTION_CONFIG = "ms_config"
+)
+
 // 配置集合，name为服务名，value为服务配置
 // Collection: ms_config
 type Config struct {
-	Name      string    `bson:"name"`
-	Value     string    `bson:"value"`
-	Remark    string    `bson:"remark"`
-	CreatedAt time.Time `bson:"createdAt"`
-	UpdatedAt time.Time `bson:"updatedAt"`
+	Name      string                 `bson:"name"`
+	Value     map[string]interface{} `bson:"value"`
+	Remark    string                 `bson:"remark"`
+	CreatedAt time.Time              `bson:"createdAt"`
+	UpdatedAt time.Time              `bson:"updatedAt"`
 }
 
 func NewConfig() *Config {
@@ -25,21 +30,33 @@ func NewConfig() *Config {
 }
 
 func (o *Config) Collection() *mongo.Collection {
-	return hmgdb.Db().Collection("ms_config")
+	return DB.Collection(COLLECTION_CONFIG)
 }
 
-func (o *Config) Insert(name, value, remark string) {
+func (o *Config) Add(name, value, remark string) error {
+	if o.Exists(name) {
+		return E10101
+	}
+	var val map[string]interface{}
+	hjson.JsonToMap(value, &val)
 	hmgdb.InsertOne(nil, o.Collection(), &Config{
 		Name:      name,
-		Value:     value,
+		Value:     val,
 		Remark:    remark,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	})
+	return nil
 }
 
-func (o *Config) Update(name, value, remark string) {
-	hmgdb.UpdateOne(nil, o.Collection(), bson.M{"name": name}, bson.M{"$set": bson.M{"value": value, "remark": remark, "updatedAt": time.Now()}})
+func (o *Config) Update(name, value, remark string) (int64, error) {
+	if !o.Exists(name) {
+		return 0, E10102
+	}
+	var val map[string]interface{}
+	hjson.JsonToMap(value, &val)
+	ur := hmgdb.UpdateOne(nil, o.Collection(), bson.M{"name": name}, bson.M{"$set": bson.M{"value": val, "remark": remark, "updatedAt": time.Now()}})
+	return ur.ModifiedCount, nil
 }
 
 func (o *Config) Find(name string, skip, limit int64) []*Config {

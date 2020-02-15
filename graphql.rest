@@ -1,0 +1,51 @@
+### 配置服务测试
+
+### query **************************************************************************************************************
+POST http://localhost/graphql
+Content-Type: application/graphql
+
+query {
+  config {
+    info(name: "mongo") {
+      name
+      value
+      remark
+      createdAt
+      updatedAt
+    }
+    total
+    list(skip:0,limit:10) {
+      name
+      value
+      remark
+      createdAt
+      updatedAt
+    }
+  }
+}
+
+
+### mutation ***********************************************************************************************************
+
+### 新增配置
+POST http://localhost/graphql
+Content-Type: application/graphql
+
+mutation {
+  config {
+    add(name: "mongo", value: "{\"connectionString\":\"mongodb://unionlive:unionlive@192.168.200.112:27017/unionlive?authSource=admin&authMechanism=SCRAM-SHA-1\"}", remark: "Mongodb连接")
+  }
+}
+
+### 编辑配置
+POST http://localhost/graphql
+Content-Type: application/graphql
+
+mutation {
+  config {
+    edit(name: "mongo1", value: "{\"connectionString\":\"mongodb://unionlive:unionlive@192.168.200.112:27017/unionlive?authSource=admin&authMechanism=SCRAM-SHA-1\"}", remark: "Mongodb连接")
+  }
+}
+
+###
+

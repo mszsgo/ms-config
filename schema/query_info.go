@@ -34,7 +34,7 @@ func (*InfoQuery) Resolve() graphql.FieldResolveFn {
 		conf := NewConfig().FindOne(args.Name)
 		return &InfoQuery{
 			Name:      conf.Name,
-			Value:     conf.Value,
+			Value:     hjson.MapToJson(conf.Value),
 			Remark:    conf.Remark,
 			UpdatedAt: conf.UpdatedAt.Local().Format(time.RFC3339),
 			CreatedAt: conf.CreatedAt.Local().Format(time.RFC3339),

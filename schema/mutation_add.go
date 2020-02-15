@@ -25,7 +25,11 @@ func (*AddMutation) Resolve() graphql.FieldResolveFn {
 	return func(p graphql.ResolveParams) (i interface{}, err error) {
 		var args *AddMutationArgs
 		hjson.MapToStruct(p.Args, &args)
-		NewConfig().Insert(args.Name, args.Value, args.Remark)
-		return 1, err
+		err = NewConfig().Add(args.Name, args.Value, args.Remark)
+		i = 0
+		if err == nil {
+			i = 1
+		}
+		return i, err
 	}
 }

@@ -5,5 +5,5 @@ import (
 )
 
 func main() {
-	schema.ListenServe()
+	schema.Main()
 }

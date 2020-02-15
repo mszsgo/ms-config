@@ -5,4 +5,10 @@
 *.sum
 *.go
 *.sh
+*.yml
+*.yaml
+*.rest
+_*
+*.exe
+schema
 

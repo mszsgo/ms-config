@@ -1,7 +1,7 @@
 ---
 kind: pipeline
 type: docker
-name: proxy
+name: default
 
 steps:
   # Build Project
@@ -11,20 +11,19 @@ steps:
       GOPROXY: https://goproxy.cn
     commands:
       - pwd && go build && ls -ltrh
-  # http://plugins.drone.io/appleboy/drone-scp/
-  - name: scp
-    image: appleboy/drone-scp
+  # http://plugins.drone.io/drone-plugins/drone-docker/
+  - name: publish
+    image: plugins/docker
     settings:
-      host:
-        from_secret: sshhost
-      port:
-        from_secret: sshport
+      registry: registry.cn-hangzhou.aliyuncs.com
       username:
-        from_secret: sshname
+        from_secret: docker_username
       password:
-        from_secret: sshpass
-      source: ./
-      target: /drone/config/
+        from_secret: docker_password
+      repo: registry.cn-hangzhou.aliyuncs.com/mszs/config
+      tags:
+        - latest
+        - 1.0.0
   # http://plugins.drone.io/appleboy/drone-ssh/
   - name: deploy
     image: appleboy/drone-ssh
@@ -38,7 +37,9 @@ steps:
       password:
         from_secret: sshpass
       script:
-        - sh /drone/config/script.sh
+        - cd /stack
+        - curl -L http://git.umq.cn/micro/ms-docker/raw/master/stack/umq-dev/micro-api-stack.yml -o micro-api-stack.yml
+        - docker stack deploy --compose-file=micro-api-stack.yml micro
 
 trigger:
   branch:
