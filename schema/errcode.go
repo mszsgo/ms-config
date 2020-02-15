@@ -11,10 +11,8 @@ import (
 // 错误码：10***
 var (
 	// 通用错误码
-	SUCCESS         = errors.New("00000:ok")
-	FAIL            = errors.New("99999:%s")
-	MONGO_ERROR     = errors.New("99100:mongo error -> %s")
-	TCC_VALUE_ERROR = errors.New("99201:无效tcc值 %s")
+	SUCCESS = errors.New("00000:ok")
+	FAIL    = errors.New("99999:系统错误")
 
 	// 业务错误码
 	E10101 = errors.New("10101:名称已经存在，不能重复新增")
